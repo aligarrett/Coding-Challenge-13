@@ -1,54 +1,55 @@
 // Task 2: Fetch Products from the API Using Fetch and Promises
 
-// Select the product container from the HTML
-const productContainer = document.getElementById("productContainer");
-
-// Function to fetch product data from the API
+// Fetch products from API
 function fetchProducts() {
-  fetch("https://www.course-api.com/javascript-store-products")
-    .then(response => {
-      // Check if the response is ok (status code 200)
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json(); // Parse JSON data from the response
-    })
-    .then(data => {
-      // Display products on the page
-      displayProducts(data);
-    })
-    .catch(error => {
-      console.error("Fetch error:", error);
-      productContainer.innerHTML = "<p>Failed to load products. Please try again later.</p>";
+    fetch('https://www.course-api.com/javascript-store-products')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => displayProducts(data))
+        .catch(error => {
+            displayError('Failed to load products. Please try again later.');
+            console.error('Error fetching products:', error);
+        });
+}
+
+// Task 3: Display Product Details Dynamically
+
+// Display products on the page
+function displayProducts(products) {
+    const productContainer = document.getElementById('productContainer');
+    productContainer.innerHTML = ''; // Clear any existing content
+
+    products.forEach(product => {
+        const { company, price, name } = product.fields;
+        const imageUrl = product.fields.image[0].url;
+        const formattedPrice = (price / 100).toFixed(2);
+
+        // Create product card
+        const productCard = document.createElement('div');
+        productCard.className = 'product';
+
+        productCard.innerHTML = `
+            <img src="${imageUrl}" alt="${name}">
+            <h2>${name}</h2>
+            <p>Company: ${company}</p>
+            <p>Price: $${formattedPrice}</p>
+        `;
+
+        productContainer.appendChild(productCard);
     });
 }
 
-// Function to display products on the webpage
-function displayProducts(products) {
-  // Clear container in case of previous content
-  productContainer.innerHTML = "";
+// Task 4: Handle Errors Gracefully
 
-  // Loop over each product and create an HTML structure for it
-  products.forEach(product => {
-    // Extract necessary product details
-    const { company, price, name } = product.fields;
-    const imageUrl = product.fields.image[0].url;
-
-    // Create product card
-    const productCard = document.createElement("div");
-    productCard.classList.add("product");
-
-    productCard.innerHTML = `
-      <img src="${imageUrl}" alt="${name}">
-      <h3>${name}</h3>
-      <p>Company: ${company}</p>
-      <p>Price: $${(price / 100).toFixed(2)}</p>
-    `;
-
-    // Append the product card to the container
-    productContainer.appendChild(productCard);
-  });
+// Display error message
+function displayError(message) {
+    const productContainer = document.getElementById('productContainer');
+    productContainer.innerHTML = `<p style="color: red; text-align: center;">${message}</p>`;
 }
 
-// Call the function to fetch products when the page loads
-fetchProducts();
+// Call fetchProducts when the page loads
+document.addEventListener('DOMContentLoaded', fetchProducts);
