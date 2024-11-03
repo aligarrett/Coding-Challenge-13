@@ -10,7 +10,7 @@ function fetchProducts() {
             return response.json();
         })
         .then(data => displayProducts(data))
-        .catch(error => {
+        .catch(error => { // Task 4
             displayError('Failed to load products. Please try again later.');
             console.error('Error fetching products:', error);
         });
